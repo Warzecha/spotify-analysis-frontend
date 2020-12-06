@@ -3,9 +3,11 @@ import PropTypes from 'prop-types';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
 import Chip from '@material-ui/core/Chip';
-import LinearProgress from '@material-ui/core/LinearProgress';
-import FilterTopListComponent from '../generic/FilterTopListComponent';
 
 
 const ArtistsAnalysisView = props => {
@@ -14,9 +16,7 @@ const ArtistsAnalysisView = props => {
         error,
         artistsData,
         timeRange,
-        setTimeRange,
-        limit,
-        setLimit,
+        setTimeRange
     } = props;
 
     const classes = useStyles();
@@ -28,38 +28,27 @@ const ArtistsAnalysisView = props => {
             genres,
             images,
             name,
-            popularity,
-            external_urls
+            popularity
         } = artist;
 
         const {
             height,
-            width,
             url
-        } = images[0] || {};
+        } = images[2] || {};
 
         return (
             <Paper className={classes.artistContainer}>
 
-                <Paper elevation={5} className={classes.imageContainer}
-                       onClick={() => window.open(external_urls.spotify)}>
-                    {width > height ? <img src={url}
-                                           alt={name}
-                                           style={{
-                                               width: 160
-                                           }}
-                    /> : <img src={url}
-                              alt={name}
-                              style={{
-                                  height: 160
-                              }}
-                    />}
-
-                </Paper>
+                <div className={classes.imageContainer}>
+                    <img src={url}
+                         alt={name}
+                         className={classes.image}
+                    />
+                </div>
 
                 <div className={classes.infoContainer}>
 
-                    <Typography className={classes.nameText} variant={'h5'}>{name}</Typography>
+                    <Typography className={classes.nameText}>{name}</Typography>
                     <Typography className={classes.descriptionText}>{`Popularity: ${popularity}`}</Typography>
                     <Typography className={classes.descriptionText}>{`Followers: ${followers.total}`}</Typography>
                     <div>
@@ -81,19 +70,28 @@ const ArtistsAnalysisView = props => {
 
     return (
         <div>
-            <FilterTopListComponent
-                title={'Your favourite artists'}
-                limit={limit}
-                setLimit={setLimit}
-                timeRange={timeRange}
-                setTimeRange={setTimeRange}
-            />
 
-            <LinearProgress style={{visibility: loading ? 'visible' : 'hidden'}}/>
+            <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginBottom: 30}}>
 
-            <div>
-                {artistsData && artistsData.map(item => <ArtistComponent artist={item} key={item.id}/>)}
+                <Typography color={'textSecondary'} style={{fontSize: 20}}>
+                    Your favourite artists
+                </Typography>
+
+                <FormControl style={{minWidth: 150}}>
+                    <InputLabel>Time range</InputLabel>
+                    <Select
+                        value={timeRange}
+                        onChange={event => setTimeRange(event.target.value)}
+                    >
+                        <MenuItem value={'short_term'}>Short</MenuItem>
+                        <MenuItem value={'medium_term'}>Medium</MenuItem>
+                        <MenuItem value={'long_term'}>Long</MenuItem>
+                    </Select>
+                </FormControl>
+
             </div>
+
+            {artistsData && artistsData.map(item => <ArtistComponent artist={item} key={item.id}/>)}
 
         </div>
     );
@@ -105,27 +103,36 @@ const useStyles = makeStyles(theme => ({
     artistContainer: {
         display: 'flex',
         width: '100%',
-        flexDirection: 'row',
-        height: 200,
+        height: '100%',
         padding: 20,
+        // borderRadius: 10,
+        // border: '1px solid #d1d5da'
         marginBottom: theme.spacing(1)
     },
     imageContainer: {
-        width: 160,
-        cursor: 'pointer'
+        maxWidth: 80,
+        flex: 1
+    },
+    image: {
+        width: '100%',
+        height: 'auto',
     },
     infoContainer: {
         flex: 4,
         marginLeft: 10,
         padding: 5,
         display: 'flex',
-        flexDirection: 'column',
+        flexDirection: 'column'
     },
     nameText: {
         fontWeight: 'bold'
     },
     descriptionText: {
         color: theme.palette.text.secondary
+    },
+    progressContainer: {
+        display: 'flex',
+        alignItems: 'center'
     }
 }));
 

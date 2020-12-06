@@ -4,7 +4,7 @@ import ArtistsAnalysisView from './ArtistsAnalysisView';
 import axios from 'axios';
 
 
-const accessToken = process.env.REACT_APP_ACCESS_TOKEN;
+const accessToken = 'BQANm_kCSkPCKnXEmeawRudW42Qq7qzCyx2F4xIvnW6GDbUXKwicjFLSumnjs6DzBQLjkWkZV074Ydgee0fcXjRUAY0J6z9oa3K2WTS4-3DKzd26UTPzEgol0bg5la64Zeo72OeE-26faEWG6JoTM0wJwuVOOfWG9k4l5XN7QvuZoJUl9cAwkxJGU09--j8FwaAhetNTaQOi2GS0waVd6N0BuLvfoF03WTxbnEYUQWZGPAmhuoHuLaHTO5C9YHXXkL_wLrrddMVOR-fSr5ZpbVWxqENf_cHiFnEc04Y';
 
 const ArtistsAnalysisContainer = props => {
 
@@ -13,19 +13,26 @@ const ArtistsAnalysisContainer = props => {
     const [artistsData, setArtistsData] = useState(null);
 
     const [timeRange, setTimeRange] = useState('medium_term');
-    const [limit, setLimit] = useState(10);
 
-    const fetchArtists = () => {
+
+    useEffect(() => {
+
         setLoading(true);
-        axios.get(`${process.env.REACT_APP_BACKEND_URL}/top/artists`, {
+        axios.get('https://api.spotify.com/v1/me/top/artists', {
+            headers: {
+                Authorization: `Bearer ${accessToken}`
+            },
             params: {
-                timeRange: timeRange.toUpperCase(),
-                token: accessToken,
-                limit: limit
+                time_range: timeRange,
+                limit: 10,
+                offset: 0
             }
         })
             .then(({data}) => {
-                setArtistsData(data);
+                console.log('data', data);
+                const {items = []} = data;
+                setArtistsData(items);
+
             })
             .catch(err => {
                 setError(err);
@@ -33,11 +40,9 @@ const ArtistsAnalysisContainer = props => {
             .finally(() => {
                 setLoading(false);
             });
-    };
 
-    useEffect(() => {
-        fetchArtists();
-    }, [limit, timeRange]);
+
+    }, [timeRange]);
 
 
     return (
@@ -47,8 +52,6 @@ const ArtistsAnalysisContainer = props => {
             artistsData={artistsData}
             timeRange={timeRange}
             setTimeRange={setTimeRange}
-            limit={limit}
-            setLimit={setLimit}
         />
     );
 };
