@@ -1,23 +1,23 @@
 import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
-import ArtistsAnalysisView from './ArtistsAnalysisView';
+import TracksAnalysisView from './TracksAnalysisView';
 import axios from 'axios';
 
 
 const accessToken = process.env.REACT_APP_ACCESS_TOKEN;
 
-const ArtistsAnalysisContainer = props => {
+const TracksAnalysisContainer = props => {
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [artistsData, setArtistsData] = useState(null);
+    const [tracksData, setTracksData] = useState(null);
 
     const [timeRange, setTimeRange] = useState('medium_term');
     const [limit, setLimit] = useState(25);
 
-    const fetchArtists = () => {
+    const fetchTracks = () => {
         setLoading(true);
-        axios.get(`${process.env.REACT_APP_BACKEND_URL}/top/artists`, {
+        axios.get(`${process.env.REACT_APP_BACKEND_URL}/top/tracks`, {
             params: {
                 timeRange: timeRange.toUpperCase(),
                 token: accessToken,
@@ -25,7 +25,7 @@ const ArtistsAnalysisContainer = props => {
             }
         })
             .then(({data}) => {
-                setArtistsData(data);
+                setTracksData(data);
 
             })
             .catch(err => {
@@ -37,24 +37,24 @@ const ArtistsAnalysisContainer = props => {
     };
 
     useEffect(() => {
-        fetchArtists();
+        fetchTracks();
     }, []);
 
 
     return (
-        <ArtistsAnalysisView
+        <TracksAnalysisView
             loading={loading}
             error={error}
-            artistsData={artistsData}
+            tracksData={tracksData}
             timeRange={timeRange}
-            setTimeRange={setTimeRange}
             limit={limit}
             setLimit={setLimit}
-            fetchArtists={fetchArtists}
+            setTimeRange={setTimeRange}
+            fetchTracks={fetchTracks}
         />
     );
 };
 
-ArtistsAnalysisContainer.propTypes = {};
+TracksAnalysisContainer.propTypes = {};
 
-export default ArtistsAnalysisContainer;
+export default TracksAnalysisContainer;

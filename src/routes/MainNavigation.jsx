@@ -4,6 +4,7 @@ import PrivateRoute from './PrivateRoute';
 
 import {makeStyles} from '@material-ui/core';
 import ArtistsAnalysisContainer from '../components/analysis/artists/ArtistsAnalysisContainer';
+import SwitchComponent from '../components/analysis/switch/SwitchComponent';
 
 const MainNavigation = () => {
     const classes = useStyles();
@@ -20,7 +21,7 @@ const MainNavigation = () => {
                 </Route>
 
                 <Route path={'/analysis'}>
-                    <ArtistsAnalysisContainer/>
+                    <SwitchComponent/>
                 </Route>
 
                 {/*<Route>*/}
