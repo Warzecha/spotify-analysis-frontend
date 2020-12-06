@@ -1,38 +1,44 @@
 import React, {useEffect, useState} from 'react';
+import PropTypes from 'prop-types';
 import TracksAnalysisView from './TracksAnalysisView';
 import axios from 'axios';
 
-const {
-    REACT_APP_BACKEND_URL,
-    REACT_APP_ACCESS_TOKEN
-} = process.env;
+
+const accessToken = process.env.REACT_APP_ACCESS_TOKEN;
 
 const TracksAnalysisContainer = props => {
+
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [tracksData, setTracksData] = useState(null);
 
     const [timeRange, setTimeRange] = useState('medium_term');
-    const [limit, setLimit] = useState(10);
+    const [limit, setLimit] = useState(25);
 
-    useEffect(() => {
+    const fetchTracks = () => {
         setLoading(true);
-        axios.get(`${REACT_APP_BACKEND_URL}/top/tracks`, {
+        axios.get(`${process.env.REACT_APP_BACKEND_URL}/top/tracks`, {
             params: {
                 timeRange: timeRange.toUpperCase(),
-                token: REACT_APP_ACCESS_TOKEN,
+                token: accessToken,
                 limit: limit
             }
         })
             .then(({data}) => {
                 setTracksData(data);
-                setLoading(false);
+
             })
             .catch(err => {
                 setError(err);
+            })
+            .finally(() => {
                 setLoading(false);
             });
-    }, [timeRange, limit]);
+    };
+
+    useEffect(() => {
+        fetchTracks();
+    }, []);
 
 
     return (
@@ -44,6 +50,7 @@ const TracksAnalysisContainer = props => {
             limit={limit}
             setLimit={setLimit}
             setTimeRange={setTimeRange}
+            fetchTracks={fetchTracks}
         />
     );
 };

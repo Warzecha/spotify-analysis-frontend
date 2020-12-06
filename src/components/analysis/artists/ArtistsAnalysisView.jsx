@@ -8,6 +8,9 @@ import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import Chip from '@material-ui/core/Chip';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import Slider from '@material-ui/core/Slider';
+import Button from '@material-ui/core/Button';
 
 
 const ArtistsAnalysisView = props => {
@@ -16,7 +19,10 @@ const ArtistsAnalysisView = props => {
         error,
         artistsData,
         timeRange,
-        setTimeRange
+        setTimeRange,
+        limit,
+        setLimit,
+        fetchArtists
     } = props;
 
     const classes = useStyles();
@@ -28,27 +34,38 @@ const ArtistsAnalysisView = props => {
             genres,
             images,
             name,
-            popularity
+            popularity,
+            external_urls
         } = artist;
 
         const {
             height,
+            width,
             url
-        } = images[2] || {};
+        } = images[0] || {};
 
         return (
             <Paper className={classes.artistContainer}>
 
-                <div className={classes.imageContainer}>
-                    <img src={url}
-                         alt={name}
-                         className={classes.image}
-                    />
-                </div>
+                <Paper elevation={5} className={classes.imageContainer}
+                     onClick={() => window.open(external_urls.spotify)}>
+                    {width > height ? <img src={url}
+                                           alt={name}
+                                           style={{
+                                               width: 160
+                                           }}
+                    /> : <img src={url}
+                              alt={name}
+                              style={{
+                                  height: 160
+                              }}
+                    />}
+
+                </Paper>
 
                 <div className={classes.infoContainer}>
 
-                    <Typography className={classes.nameText}>{name}</Typography>
+                    <Typography className={classes.nameText} variant={'h5'}>{name}</Typography>
                     <Typography className={classes.descriptionText}>{`Popularity: ${popularity}`}</Typography>
                     <Typography className={classes.descriptionText}>{`Followers: ${followers.total}`}</Typography>
                     <div>
@@ -70,27 +87,59 @@ const ArtistsAnalysisView = props => {
 
     return (
         <div>
+            <Typography color={'textSecondary'} style={{fontSize: 20}}>
+                Your favourite artists
+            </Typography>
+            <div style={{
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                marginBottom: 30
+            }}>
 
-            <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginBottom: 30}}>
-
-                <Typography color={'textSecondary'} style={{fontSize: 20}}>
-                    Your favourite artists
-                </Typography>
-
-                <FormControl style={{minWidth: 150}}>
+                <div style={{minWidth: '20%', maxWidth: '50%', margin: 10}}>
                     <InputLabel>Time range</InputLabel>
                     <Select
                         value={timeRange}
                         onChange={event => setTimeRange(event.target.value)}
+                        style={{
+                            width: '100%'
+                        }}
                     >
                         <MenuItem value={'short_term'}>Short</MenuItem>
                         <MenuItem value={'medium_term'}>Medium</MenuItem>
                         <MenuItem value={'long_term'}>Long</MenuItem>
                     </Select>
-                </FormControl>
-
+                </div>
+                <div style={{
+                    minWidth: '30%',
+                    margin: 10,
+                }}>
+                    <Typography color={'textSecondary'}>Records</Typography>
+                    <Slider
+                        defaultValue={limit}
+                        step={1}
+                        marks
+                        min={10}
+                        max={50}
+                        onChange={(e, newValue) => setLimit(newValue)}
+                        valueLabelDisplay={'auto'}/>
+                </div>
+                <div style={{
+                    margin: 10
+                }}>
+                    <Button variant={'contained'} color={'primary'} onClick={() => fetchArtists()}>
+                        Fetch
+                    </Button>
+                </div>
             </div>
+            <div style={{
+                width: '100%',
 
+                visibility: loading ? 'visible' : 'hidden'
+            }}>
+                <LinearProgress/>
+            </div>
             {artistsData && artistsData.map(item => <ArtistComponent artist={item} key={item.id}/>)}
 
         </div>
@@ -103,26 +152,29 @@ const useStyles = makeStyles(theme => ({
     artistContainer: {
         display: 'flex',
         width: '100%',
-        height: '100%',
+        flexDirection: 'row',
+        height: 200,
         padding: 20,
         // borderRadius: 10,
         // border: '1px solid #d1d5da'
         marginBottom: theme.spacing(1)
     },
     imageContainer: {
-        maxWidth: 80,
-        flex: 1
+        width: 160,
+        cursor: 'pointer'
     },
     image: {
-        width: '100%',
-        height: 'auto',
+        // width: '100%',
+        // height: 'auto',
+        // width: 160
+
     },
     infoContainer: {
         flex: 4,
         marginLeft: 10,
         padding: 5,
         display: 'flex',
-        flexDirection: 'column'
+        flexDirection: 'column',
     },
     nameText: {
         fontWeight: 'bold'

@@ -4,7 +4,7 @@ import ArtistsAnalysisView from './ArtistsAnalysisView';
 import axios from 'axios';
 
 
-const accessToken = process.env.REACT_AAPP_ACCESS_TOKEN;
+const accessToken = process.env.REACT_APP_ACCESS_TOKEN;
 
 const ArtistsAnalysisContainer = props => {
 
@@ -13,25 +13,19 @@ const ArtistsAnalysisContainer = props => {
     const [artistsData, setArtistsData] = useState(null);
 
     const [timeRange, setTimeRange] = useState('medium_term');
+    const [limit, setLimit] = useState(25);
 
-
-    useEffect(() => {
-
+    const fetchArtists = () => {
         setLoading(true);
-        axios.get('https://api.spotify.com/v1/me/top/artists', {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            },
+        axios.get(`${process.env.REACT_APP_BACKEND_URL}/top/artists`, {
             params: {
-                time_range: timeRange,
-                limit: 10,
-                offset: 0
+                timeRange: timeRange.toUpperCase(),
+                token: accessToken,
+                limit: limit
             }
         })
             .then(({data}) => {
-                console.log('data', data);
-                const {items = []} = data;
-                setArtistsData(items);
+                setArtistsData(data);
 
             })
             .catch(err => {
@@ -40,9 +34,11 @@ const ArtistsAnalysisContainer = props => {
             .finally(() => {
                 setLoading(false);
             });
+    };
 
-
-    }, [timeRange]);
+    useEffect(() => {
+        fetchArtists();
+    }, []);
 
 
     return (
@@ -52,6 +48,9 @@ const ArtistsAnalysisContainer = props => {
             artistsData={artistsData}
             timeRange={timeRange}
             setTimeRange={setTimeRange}
+            limit={limit}
+            setLimit={setLimit}
+            fetchArtists={fetchArtists}
         />
     );
 };
