@@ -9,34 +9,45 @@ import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import Chip from '@material-ui/core/Chip';
 import LinearProgress from '@material-ui/core/LinearProgress';
+import {fancyTimeFormat} from '../../../utlis/TimeUtils';
 import Slider from '@material-ui/core/Slider';
 import Button from '@material-ui/core/Button';
 
 
-const ArtistsAnalysisView = props => {
+const TracksAnalysisView = props => {
     const {
         loading,
         error,
-        artistsData,
+        tracksData,
         timeRange,
         setTimeRange,
         limit,
         setLimit,
-        fetchArtists
+        fetchTracks
     } = props;
 
     const classes = useStyles();
 
-    const ArtistComponent = ({artist}) => {
+    const TrackComponent = ({track}) => {
 
         const {
-            followers,
-            genres,
-            images,
             name,
+            artists,
+            uri,
+            type,
             popularity,
+            id,
+            href,
+            explicit,
+            album,
+            preview_url,
+            duration_ms,
             external_urls
-        } = artist;
+        } = track;
+
+        const {
+            images,
+        } = album;
 
         const {
             height,
@@ -44,11 +55,13 @@ const ArtistsAnalysisView = props => {
             url
         } = images[0] || {};
 
+        console.log(external_urls);
+
         return (
             <Paper className={classes.artistContainer}>
 
                 <Paper elevation={5} className={classes.imageContainer}
-                     onClick={() => window.open(external_urls.spotify)}>
+                       onClick={() => window.open(external_urls.spotify)}>
                     {width > height ? <img src={url}
                                            alt={name}
                                            style={{
@@ -60,25 +73,21 @@ const ArtistsAnalysisView = props => {
                                   height: 160
                               }}
                     />}
-
                 </Paper>
 
                 <div className={classes.infoContainer}>
 
                     <Typography className={classes.nameText} variant={'h5'}>{name}</Typography>
-                    <Typography className={classes.descriptionText}>{`Popularity: ${popularity}`}</Typography>
-                    <Typography className={classes.descriptionText}>{`Followers: ${followers.total}`}</Typography>
-                    <div>
-                        {
-                            genres.map(genre => <Chip size={'small'}
-                                                      label={genre}
-                                                      key={genre}
-                                                      variant='outlined'
-                                                      style={{marginLeft: 10}}/>)
-                        }
-
-                    </div>
-
+                    <Typography className={classes.descriptionText}
+                                variant={'h6'}>{artists.map(i => i.name).join(", ")}</Typography>
+                    <Typography
+                        className={classes.descriptionText}>{`Duration: ${fancyTimeFormat(duration_ms / 1000)}`}</Typography>
+                    <Typography className={classes.descriptionText} style={{
+                        visibility: explicit ? 'visible' : 'hidden'
+                    }}>{`Explicit`}</Typography>
+                    <audio controls={'controls'}>
+                        <source src={preview_url} type={'audio/mpeg'}/>
+                    </audio>
                 </div>
 
             </Paper>);
@@ -88,13 +97,14 @@ const ArtistsAnalysisView = props => {
     return (
         <div>
             <Typography color={'textSecondary'} style={{fontSize: 20}}>
-                Your favourite artists
+                Your favourite tracks
             </Typography>
             <div style={{
                 display: 'flex',
                 flexDirection: 'row',
                 justifyContent: 'space-between',
-                marginBottom: 30
+                marginBottom: 30,
+                marginTop: 30
             }}>
 
                 <div style={{minWidth: '20%', maxWidth: '50%', margin: 10}}>
@@ -128,10 +138,11 @@ const ArtistsAnalysisView = props => {
                 <div style={{
                     margin: 10
                 }}>
-                    <Button variant={'contained'} color={'primary'} onClick={() => fetchArtists()}>
+                    <Button variant={'contained'} color={'primary'} onClick={() => fetchTracks()}>
                         Fetch
                     </Button>
                 </div>
+
             </div>
             <div style={{
                 width: '100%',
@@ -140,13 +151,13 @@ const ArtistsAnalysisView = props => {
             }}>
                 <LinearProgress/>
             </div>
-            {artistsData && artistsData.map(item => <ArtistComponent artist={item} key={item.id}/>)}
+            {tracksData && tracksData.map(item => <TrackComponent track={item} key={item.id}/>)}
 
         </div>
     );
 };
 
-ArtistsAnalysisView.propTypes = {};
+TracksAnalysisView.propTypes = {};
 
 const useStyles = makeStyles(theme => ({
     artistContainer: {
@@ -166,12 +177,12 @@ const useStyles = makeStyles(theme => ({
     image: {
         // width: '100%',
         // height: 'auto',
-        // width: 160
+        height: 160
 
     },
     infoContainer: {
         flex: 4,
-        marginLeft: 10,
+        marginLeft: 20,
         padding: 5,
         display: 'flex',
         flexDirection: 'column',
@@ -188,4 +199,4 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-export default ArtistsAnalysisView;
+export default TracksAnalysisView;
