@@ -4,7 +4,7 @@ import ArtistsAnalysisView from './ArtistsAnalysisView';
 import axios from 'axios';
 
 
-const accessToken = 'BQANm_kCSkPCKnXEmeawRudW42Qq7qzCyx2F4xIvnW6GDbUXKwicjFLSumnjs6DzBQLjkWkZV074Ydgee0fcXjRUAY0J6z9oa3K2WTS4-3DKzd26UTPzEgol0bg5la64Zeo72OeE-26faEWG6JoTM0wJwuVOOfWG9k4l5XN7QvuZoJUl9cAwkxJGU09--j8FwaAhetNTaQOi2GS0waVd6N0BuLvfoF03WTxbnEYUQWZGPAmhuoHuLaHTO5C9YHXXkL_wLrrddMVOR-fSr5ZpbVWxqENf_cHiFnEc04Y';
+const accessToken = process.env.REACT_AAPP_ACCESS_TOKEN;
 
 const ArtistsAnalysisContainer = props => {
 
