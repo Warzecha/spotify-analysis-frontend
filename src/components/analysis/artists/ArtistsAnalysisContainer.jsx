@@ -13,7 +13,7 @@ const ArtistsAnalysisContainer = props => {
     const [artistsData, setArtistsData] = useState(null);
 
     const [timeRange, setTimeRange] = useState('medium_term');
-    const [limit, setLimit] = useState(25);
+    const [limit, setLimit] = useState(10);
 
     const fetchArtists = () => {
         setLoading(true);
@@ -26,7 +26,6 @@ const ArtistsAnalysisContainer = props => {
         })
             .then(({data}) => {
                 setArtistsData(data);
-
             })
             .catch(err => {
                 setError(err);
@@ -38,7 +37,7 @@ const ArtistsAnalysisContainer = props => {
 
     useEffect(() => {
         fetchArtists();
-    }, []);
+    }, [limit, timeRange]);
 
 
     return (
@@ -50,7 +49,6 @@ const ArtistsAnalysisContainer = props => {
             setTimeRange={setTimeRange}
             limit={limit}
             setLimit={setLimit}
-            fetchArtists={fetchArtists}
         />
     );
 };
