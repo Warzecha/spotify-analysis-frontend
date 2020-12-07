@@ -1,17 +1,13 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
-import FormControl from '@material-ui/core/FormControl';
-import InputLabel from '@material-ui/core/InputLabel';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
-import Chip from '@material-ui/core/Chip';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import {fancyTimeFormat} from '../../../utlis/TimeUtils';
-import Slider from '@material-ui/core/Slider';
-import Button from '@material-ui/core/Button';
+import FilterTopListComponent from '../generic/FilterTopListComponent';
+import Chip from '@material-ui/core/Chip';
+import Tooltip from '@material-ui/core/Tooltip';
+import StarIcon from '@material-ui/icons/Stars';
 
 
 const TracksAnalysisView = props => {
@@ -22,8 +18,7 @@ const TracksAnalysisView = props => {
         timeRange,
         setTimeRange,
         limit,
-        setLimit,
-        fetchTracks
+        setLimit
     } = props;
 
     const classes = useStyles();
@@ -42,12 +37,11 @@ const TracksAnalysisView = props => {
             album,
             preview_url,
             duration_ms,
-            external_urls
+            external_urls: externalUrls,
+            polishTopListRank
         } = track;
 
-        const {
-            images,
-        } = album;
+        const {images} = album;
 
         const {
             height,
@@ -55,24 +49,25 @@ const TracksAnalysisView = props => {
             url
         } = images[0] || {};
 
-        console.log(external_urls);
+
+        const {spotify: spotifyUrl} = externalUrls;
 
         return (
-            <Paper className={classes.artistContainer}>
+            <Paper className={classes.trackContainer}>
 
                 <Paper elevation={5} className={classes.imageContainer}
-                       onClick={() => window.open(external_urls.spotify)}>
-                    {width > height ? <img src={url}
-                                           alt={name}
-                                           style={{
-                                               width: 160
-                                           }}
-                    /> : <img src={url}
-                              alt={name}
-                              style={{
-                                  height: 160
-                              }}
-                    />}
+                       onClick={() => window.open(spotifyUrl)}>
+                    {width > height ? (
+                        <img src={url}
+                             alt={name}
+                             style={{width: 160}}
+                        />) : (
+                        <img src={url}
+                             alt={name}
+                             style={{
+                                 height: 160
+                             }}
+                        />)}
                 </Paper>
 
                 <div className={classes.infoContainer}>
@@ -90,68 +85,36 @@ const TracksAnalysisView = props => {
                     </audio>
                 </div>
 
+                <div className={classes.infoContainer}>
+                    {
+                        polishTopListRank && (
+                            <Tooltip title={`Top ${polishTopListRank} most popular in Poland`}>
+                                <Chip label={`Top ${polishTopListRank}`} icon={<StarIcon/>} variant={'outlined'}/>
+                            </Tooltip>)
+                    }
+
+                </div>
+
             </Paper>);
     };
 
 
     return (
-        <div>
-            <Typography color={'textSecondary'} style={{fontSize: 20}}>
-                Your favourite tracks
-            </Typography>
-            <div style={{
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                marginBottom: 30,
-                marginTop: 30
-            }}>
+        <div style={{display: 'flex', flexDirection: 'column'}}>
 
-                <div style={{minWidth: '20%', maxWidth: '50%', margin: 10}}>
-                    <InputLabel>Time range</InputLabel>
-                    <Select
-                        value={timeRange}
-                        onChange={event => setTimeRange(event.target.value)}
-                        style={{
-                            width: '100%'
-                        }}
-                    >
-                        <MenuItem value={'short_term'}>Short</MenuItem>
-                        <MenuItem value={'medium_term'}>Medium</MenuItem>
-                        <MenuItem value={'long_term'}>Long</MenuItem>
-                    </Select>
-                </div>
-                <div style={{
-                    minWidth: '30%',
-                    margin: 10,
-                }}>
-                    <Typography color={'textSecondary'}>Records</Typography>
-                    <Slider
-                        defaultValue={limit}
-                        step={1}
-                        marks
-                        min={10}
-                        max={50}
-                        onChange={(e, newValue) => setLimit(newValue)}
-                        valueLabelDisplay={'auto'}/>
-                </div>
-                <div style={{
-                    margin: 10
-                }}>
-                    <Button variant={'contained'} color={'primary'} onClick={() => fetchTracks()}>
-                        Fetch
-                    </Button>
-                </div>
+            <FilterTopListComponent
+                title={'Your favourite tracks'}
+                limit={limit}
+                setLimit={setLimit}
+                timeRange={timeRange}
+                setTimeRange={setTimeRange}
+            />
 
+            <LinearProgress style={{visibility: loading ? 'visible' : 'hidden'}}/>
+
+            <div>
+                {tracksData && tracksData.map(item => <TrackComponent track={item} key={item.id}/>)}
             </div>
-            <div style={{
-                width: '100%',
-
-                visibility: loading ? 'visible' : 'hidden'
-            }}>
-                <LinearProgress/>
-            </div>
-            {tracksData && tracksData.map(item => <TrackComponent track={item} key={item.id}/>)}
 
         </div>
     );
@@ -160,28 +123,21 @@ const TracksAnalysisView = props => {
 TracksAnalysisView.propTypes = {};
 
 const useStyles = makeStyles(theme => ({
-    artistContainer: {
+    trackContainer: {
         display: 'flex',
         width: '100%',
         flexDirection: 'row',
         height: 200,
         padding: 20,
-        // borderRadius: 10,
-        // border: '1px solid #d1d5da'
         marginBottom: theme.spacing(1)
     },
     imageContainer: {
-        width: 160,
+        maxWidth: 160,
+        flex: 1,
         cursor: 'pointer'
     },
-    image: {
-        // width: '100%',
-        // height: 'auto',
-        height: 160
-
-    },
     infoContainer: {
-        flex: 4,
+        flex: 2,
         marginLeft: 20,
         padding: 5,
         display: 'flex',
@@ -192,10 +148,6 @@ const useStyles = makeStyles(theme => ({
     },
     descriptionText: {
         color: theme.palette.text.secondary
-    },
-    progressContainer: {
-        display: 'flex',
-        alignItems: 'center'
     }
 }));
 
