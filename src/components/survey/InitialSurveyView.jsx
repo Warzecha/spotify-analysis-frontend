@@ -4,6 +4,10 @@ import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import Button from '@material-ui/core/Button';
+import Paper from '@material-ui/core/Paper';
+import TextField from '@material-ui/core/TextField';
+import Typography from '@material-ui/core/Typography';
+
 
 const InitialSurveyView = props => {
 
@@ -19,36 +23,43 @@ const InitialSurveyView = props => {
         setActiveStep(prev => prev - 1);
     };
 
-    return (
-        <div>
 
+    return (
+        <Paper className={classes.root}>
 
             <Stepper activeStep={activeStep}>
 
                 <Step>
                     <StepLabel>{'Personal data'}</StepLabel>
-
-
                 </Step>
 
                 <Step>
                     <StepLabel>{'Music taste'}</StepLabel>
-
-
                 </Step>
 
                 <Step>
                     <StepLabel>{'Hobbies'}</StepLabel>
-
                 </Step>
             </Stepper>
 
             <div>
+                {
+                    activeStep === 0 && (
+                        <div className={classes.formSection}>
+
+                            <TextField label='Age' variant='outlined' type={'number'} className={classes.formElement}/>
+                            <TextField label='Sex' variant='outlined' className={classes.formElement}/>
+
+                        </div>
+                    )
+
+
+                }
 
 
             </div>
 
-            <div>
+            <div className={classes.buttonContainer}>
                 <Button
                     disabled={activeStep === 0}
                     onClick={handleBack}
@@ -60,21 +71,27 @@ const InitialSurveyView = props => {
                 </Button>
             </div>
 
-        </div>
+        </Paper>
     );
 };
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles({
     root: {
         width: '100%',
+        padding: 10
     },
-    button: {
-        marginRight: theme.spacing(1),
+    buttonContainer: {
+        display: 'flex',
+        justifyContent: 'flex-end'
     },
-    instructions: {
-        marginTop: theme.spacing(1),
-        marginBottom: theme.spacing(1),
+    formSection: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-end'
     },
-}));
+    formElement: {
+        marginBottom: 10
+    },
+});
 
 export default InitialSurveyView;
