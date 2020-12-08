@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import Typography from '@material-ui/core/Typography';
 import spotifyLogo from '../../assets/logo_spotify.svg.webp';
 import Paper from '@material-ui/core/Paper';
-import {useLocation} from 'react-router-dom';
+import {useLocation, useHistory} from 'react-router-dom';
 import axios from 'axios';
 import {useDispatch, useSelector} from 'react-redux';
 import {logIn} from '../../redux/actions/logInActions';
@@ -23,6 +23,8 @@ const WelcomeContainer = () => {
     const [loading, setLoading] = useState(false);
     const [currentPlaying, setCurrentPlaying] = useState(undefined);
 
+    const history = useHistory();
+
     const {
         logged,
         accessToken
@@ -38,6 +40,8 @@ const WelcomeContainer = () => {
             })
                 .then(({data}) => {
                     dispatch(logIn(data));
+                    history.push('/')
+
                 })
         }
     }, [query.get('code')]);

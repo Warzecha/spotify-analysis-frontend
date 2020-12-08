@@ -71,7 +71,7 @@ const TrackComponent = ({track, atMinute}) => {
                         className={classes.descriptionText}>{`Duration: ${fancyTimeFormat(duration_ms / 1000)}`}</Typography>
                     {!!atMinute && <Typography
                         className={classes.descriptionText} style={{
-                            marginLeft: 50
+                        marginLeft: 50
                     }}>{`Currently At: ${fancyTimeFormat(atMinute / 1000)}`}</Typography>}
                 </div>
                 <Typography className={classes.descriptionText} style={{
@@ -82,15 +82,11 @@ const TrackComponent = ({track, atMinute}) => {
                 </audio>
             </div>
 
-            <div className={classes.infoContainer}>
-                {
-                    polishTopListRank && (
-                        <Tooltip title={`Top ${polishTopListRank} most popular in Poland`}>
-                            <Chip label={`Top ${polishTopListRank}`} icon={<StarIcon/>} variant={'outlined'}/>
-                        </Tooltip>)
-                }
-
-            </div>
+            {polishTopListRank && <div className={classes.infoContainer}>
+                <Tooltip title={`Top ${polishTopListRank} most popular in Poland`}>
+                    <Chip label={`Top ${polishTopListRank}`} icon={<StarIcon/>} variant={'outlined'}/>
+                </Tooltip>
+            </div>}
 
         </Paper>);
 };
@@ -112,6 +108,7 @@ const useStyles = makeStyles(theme => ({
     infoContainer: {
         flex: 2,
         marginLeft: 20,
+        width: '100%',
         padding: 5,
         display: 'flex',
         flexDirection: 'column',
