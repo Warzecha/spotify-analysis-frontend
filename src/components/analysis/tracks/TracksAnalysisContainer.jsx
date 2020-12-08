@@ -1,13 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import TracksAnalysisView from './TracksAnalysisView';
 import axios from 'axios';
+import {useSelector} from 'react-redux';
 
 const {
     REACT_APP_BACKEND_URL,
-    REACT_APP_ACCESS_TOKEN
 } = process.env;
 
-const TracksAnalysisContainer = props => {
+const TracksAnalysisContainer = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [tracksData, setTracksData] = useState(null);
@@ -15,24 +15,28 @@ const TracksAnalysisContainer = props => {
     const [timeRange, setTimeRange] = useState('medium_term');
     const [limit, setLimit] = useState(10);
 
+    const {accessToken} = useSelector(state => state.logIn);
+
     useEffect(() => {
-        setLoading(true);
-        axios.get(`${REACT_APP_BACKEND_URL}/top/tracks`, {
-            params: {
-                timeRange: timeRange.toUpperCase(),
-                token: REACT_APP_ACCESS_TOKEN,
-                limit: limit
-            }
-        })
-            .then(({data}) => {
-                setTracksData(data);
-                setLoading(false);
+        if (accessToken) {
+            setLoading(true);
+            axios.get(`${REACT_APP_BACKEND_URL}/top/tracks`, {
+                params: {
+                    timeRange: timeRange.toUpperCase(),
+                    token: accessToken,
+                    limit: limit
+                }
             })
-            .catch(err => {
-                setError(err);
-                setLoading(false);
-            });
-    }, [timeRange, limit]);
+                .then(({data}) => {
+                    setTracksData(data);
+                    setLoading(false);
+                })
+                .catch(err => {
+                    setError(err);
+                    setLoading(false);
+                });
+        }
+    }, [timeRange, limit, accessToken]);
 
 
     return (

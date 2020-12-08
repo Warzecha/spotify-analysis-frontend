@@ -6,7 +6,6 @@ import DrawerContent from './DrawerContent';
 import {closeSidebarAction} from '../../redux/actions/layoutActions';
 import {useHistory, useLocation} from 'react-router-dom';
 import makeStyles from '@material-ui/core/styles/makeStyles';
-// import {logout} from '../../../redux/actions/authActions';
 
 const SideBar = ({window}) => {
     const classes = useStyles();

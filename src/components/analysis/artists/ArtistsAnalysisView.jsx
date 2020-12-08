@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
@@ -64,7 +63,7 @@ const ArtistsAnalysisView = props => {
                     <Typography className={classes.descriptionText}>{`Followers: ${followers.total}`}</Typography>
                     <div>
                         {
-                            genres.map(genre => <Chip size={'small'}
+                            genres.map(genre => <Chip size={'medium'}
                                                       label={genre}
                                                       key={genre}
                                                       variant='outlined'

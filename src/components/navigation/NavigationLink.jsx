@@ -20,7 +20,7 @@ const NavigationLink = (props) => {
         open,
         isNested = false,
         active,
-        visible = true
+        visible
     } = props;
 
     const styles = useStyles();

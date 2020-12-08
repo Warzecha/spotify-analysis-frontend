@@ -1,10 +1,9 @@
 import React from 'react';
 import {Route, Switch} from 'react-router-dom';
-import PrivateRoute from './PrivateRoute';
 
 import {makeStyles} from '@material-ui/core';
-import ArtistsAnalysisContainer from '../components/analysis/artists/ArtistsAnalysisContainer';
 import SwitchComponent from '../components/analysis/switch/SwitchComponent';
+import WelcomeContainer from '../components/welcome/WelcomeContainer';
 
 const MainNavigation = () => {
     const classes = useStyles();
@@ -13,6 +12,7 @@ const MainNavigation = () => {
         <main className={classes.content}>
             <div className={classes.toolbar}/>
             <Switch>
+
                 <Route path='/login'>
                     {/*<SignInFormContainer/>*/}
                     <div>
@@ -22,6 +22,9 @@ const MainNavigation = () => {
 
                 <Route path={'/analysis'}>
                     <SwitchComponent/>
+                </Route>
+                <Route path={'/'}>
+                    <WelcomeContainer/>
                 </Route>
 
                 {/*<Route>*/}

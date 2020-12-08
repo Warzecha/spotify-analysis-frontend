@@ -4,12 +4,20 @@ import List from '@material-ui/core/List';
 import {matchPath} from 'react-router-dom';
 import NavigationLink from './NavigationLink';
 import AssessmentIcon from '@material-ui/icons/Assessment';
+import {useSelector} from 'react-redux';
 
 const DrawerContent = props => {
 
     const {
         pathname,
     } = props;
+
+    const logInState = useSelector(state => state.logIn);
+
+    const {
+        logged
+    } = logInState;
+
 
     return (
         <div style={{display: 'flex', flex: 1, flexDirection: 'column'}}>
@@ -21,6 +29,7 @@ const DrawerContent = props => {
                     IconComponent={AssessmentIcon}
                     path={'/analysis'}
                     active={!!matchPath(pathname, {path: '/analysis'})}
+                    visible={logged}
                 />
 
             </List>

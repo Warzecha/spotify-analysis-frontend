@@ -2,9 +2,7 @@ import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import ArtistsAnalysisView from './ArtistsAnalysisView';
 import axios from 'axios';
-
-
-const accessToken = process.env.REACT_APP_ACCESS_TOKEN;
+import {useSelector} from 'react-redux';
 
 const ArtistsAnalysisContainer = props => {
 
@@ -14,6 +12,9 @@ const ArtistsAnalysisContainer = props => {
 
     const [timeRange, setTimeRange] = useState('medium_term');
     const [limit, setLimit] = useState(10);
+
+    const {accessToken} = useSelector(state => state.logIn);
+
 
     const fetchArtists = () => {
         setLoading(true);
@@ -36,8 +37,10 @@ const ArtistsAnalysisContainer = props => {
     };
 
     useEffect(() => {
-        fetchArtists();
-    }, [limit, timeRange]);
+        if (accessToken) {
+            fetchArtists();
+        }
+    }, [limit, timeRange, accessToken]);
 
 
     return (
